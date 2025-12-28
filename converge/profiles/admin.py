@@ -1,3 +1,15 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import Profile
+
+
+@admin.register(Profile)
+class ProfileAdmin(admin.ModelAdmin):
+	list_display = (
+		"registration_number",
+		"department",
+		"course",
+		"interest_type",
+		"experience_level",
+	)
+	search_fields = ("registration_number", "name", "department", "course")
