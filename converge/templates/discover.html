@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discover Projects - Converge</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .header {
+            background-color: #007bff;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-group label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        .filter-group select {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            cursor: pointer;
+            background-color: #f8f9fa;
+            border: none;
+            border-radius: 6px 6px 0 0;
+            font-size: 15px;
+        }
+
+        .tab.active {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .tab:hover {
+            background-color: #0056b3;
+            color: white;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .project-card {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+            background-color: #fafafa;
+        }
+
+        .project-card h3 {
+            margin-top: 0;
+            color: #333;
+        }
+
+        .project-card p {
+            margin: 8px 0;
+            color: #666;
+        }
+
+        .project-card a {
+            color: #007bff;
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .project-card a:hover {
+            text-decoration: underline;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-right: 8px;
+            color: #495057;
+        }
+
+        .empty {
+            text-align: center;
+            color: #999;
+            padding: 40px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>Discover Projects</h1>
+        <p>Explore campus projects and open-source contributions</p>
+    </div>
+
+    <div class="container">
+        <a href="/" class="back-link">← Back to Home</a>
+
+        <form method="get" class="filters">
+            <div class="filter-group">
+                <label for="type">Project Type:</label>
+                <select name="type" id="type" onchange="this.form.submit()">
+                    <option value="all" {% if project_type == 'all' %}selected{% endif %}>All Types</option>
+                    <option value="campus_closed" {% if project_type == 'campus_closed' %}selected{% endif %}>Campus
+                        Closed</option>
+                    <option value="campus_oss" {% if project_type == 'campus_oss' %}selected{% endif %}>Campus Open Source
+                    </option>
+                    <option value="external_oss" {% if project_type == 'external_oss' %}selected{% endif %}>External OSS
+                    </option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="department">Department:</label>
+                <select name="department" id="department" onchange="this.form.submit()">
+                    <option value="">All Departments</option>
+                    {% for dept in departments %}
+                    <option value="{{ dept }}" {% if selected_department == dept %}selected{% endif %}>{{ dept }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="year">Year:</label>
+                <select name="year" id="year" onchange="this.form.submit()">
+                    <option value="">All Years</option>
+                    {% for yr in years %}
+                    <option value="{{ yr }}" {% if selected_year|stringformat:"s" == yr|stringformat:"s" %}selected{% endif %}>Year {{ yr }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </form>
+
+        <div class="tabs">
+            <button class="tab {% if project_type == 'all' or project_type == 'campus_closed' %}active{% endif %}"
+                onclick="showSection('campus_closed')">
+                Campus Closed ({{ campus_closed.count }})
+            </button>
+            <button class="tab {% if project_type == 'campus_oss' %}active{% endif %}"
+                onclick="showSection('campus_oss')">
+                Campus OSS ({{ campus_oss|length }})
+            </button>
+            <button class="tab {% if project_type == 'external_oss' %}active{% endif %}"
+                onclick="showSection('external_oss')">
+                External OSS ({{ external_oss|length }})
+            </button>
+        </div>
+
+        <!-- Campus Closed Projects -->
+        <div id="campus_closed"
+            class="section {% if project_type == 'all' or project_type == 'campus_closed' %}active{% endif %}">
+            <h2>Campus Closed Projects</h2>
+            {% if campus_closed %}
+            {% for project in campus_closed %}
+            <div class="project-card">
+                <h3>{{ project.title }}</h3>
+                <p>{{ project.description }}</p>
+                <p>
+                    {% if project.owner_profile %}
+                    <span class="badge">Owner: {{
+                        project.owner_profile.name|default:project.owner_profile.registration_number }}</span>
+                    {% if project.owner_profile.department %}<span class="badge">{{ project.owner_profile.department
+                        }}</span>{% endif %}
+                    {% if project.owner_profile.year %}<span class="badge">Year {{ project.owner_profile.year
+                        }}</span>{% endif %}
+                    {% endif %}
+                </p>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="empty">No campus closed projects found.</div>
+            {% endif %}
+        </div>
+
+        <!-- Campus OSS -->
+        <div id="campus_oss" class="section {% if project_type == 'campus_oss' %}active{% endif %}">
+            <h2>Campus Open Source Projects</h2>
+            {% if campus_oss %}
+            {% for repo in campus_oss %}
+            <div class="project-card">
+                <h3><a href="{{ repo.url }}" target="_blank">{{ repo.url }}</a></h3>
+                <p>
+                    <span class="badge">Owner: {{ repo.owner }}</span>
+                    {% if repo.department %}<span class="badge">{{ repo.department }}</span>{% endif %}
+                    {% if repo.year %}<span class="badge">Year {{ repo.year }}</span>{% endif %}
+                </p>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="empty">No campus open source projects found.</div>
+            {% endif %}
+        </div>
+
+        <!-- External OSS -->
+        <div id="external_oss" class="section {% if project_type == 'external_oss' %}active{% endif %}">
+            <h2>External Open Source Contributions</h2>
+            {% if external_oss %}
+            {% for repo in external_oss %}
+            <div class="project-card">
+                <h3><a href="{{ repo.url }}" target="_blank">{{ repo.url }}</a></h3>
+                <p>
+                    <span class="badge">Contributor: {{ repo.contributor }}</span>
+                    {% if repo.department %}<span class="badge">{{ repo.department }}</span>{% endif %}
+                    {% if repo.year %}<span class="badge">Year {{ repo.year }}</span>{% endif %}
+                </p>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="empty">No external OSS contributions found.</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            document.getElementById(sectionId).classList.add('active');
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+
+</html>

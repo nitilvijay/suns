@@ -2,7 +2,8 @@ from django.db import models
 
 from profiles.models import Profile
 
-
+#Here we have to return the output of Gemini!!!!!!!!!!!!!!!!!!!!!
+#!!!!!!!!!!!!!!!!!!!!!!!
 class Resume(models.Model):
 	profile = models.OneToOneField(Profile, on_delete=models.CASCADE, related_name="resume")
 	file = models.FileField(upload_to="resumes/")

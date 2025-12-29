@@ -17,10 +17,21 @@ Including another URLconf
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+from profiles import views as profile_views
+from resumes import views as resume_views
+from converge import views as core_views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path("admin/", admin.site.urls),
+    path("api/profiles/", include("profiles.urls")),
+    path("api/resumes/", include("resumes.urls")),
+    path("api/projects/", include("projects.urls")),
+    # Simple HTML pages
+    path("", core_views.home, name="home"),
+    path("profiles/register/", profile_views.register, name="profiles-register"),
+    path("resumes/upload/", resume_views.upload_resume, name="resumes-upload"),
+    path("discover/", include("discovery.urls")),
 ]
 
 if settings.DEBUG:
