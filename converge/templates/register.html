@@ -78,7 +78,7 @@
             {% endfor %}
         {% endif %}
 
-        <form method="post">
+        <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             
             <label for="name">Name:</label>
@@ -120,6 +120,10 @@
             
             <label for="external_oss">External OSS Contributions (Optional):</label>
             <textarea name="external_oss_contributions" id="external_oss" placeholder="External repo URLs you contributed to (one per line)&#10;https://github.com/org/project1&#10;https://github.com/org/project2"></textarea>
+            
+            <label for="resume">Upload Resume (PDF) - Optional:</label>
+            <input type="file" name="resume" id="resume" accept=".pdf">
+            <small style="color: #666; margin-top: 5px;">Upload your resume to auto-fill skills, projects, and experience</small>
             
             <button type="submit">Register</button>
         </form>

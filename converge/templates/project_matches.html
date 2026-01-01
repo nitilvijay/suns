@@ -166,7 +166,7 @@
             <h2>Top {{ matches|length }} Matches</h2>
             {% for match in matches %}
             <div class="match-card">
-                <span class="rank">#{forloop.counter}</span>
+                <!-- <span class="rank">#{forloop.counter}</span> -->
                 <h3>{{ match.name }}</h3>
                 <p>
                     <span class="score">Score: {{ match.final_score }}</span>
@@ -175,8 +175,8 @@
 
                 <div class="breakdown">
                     <div class="breakdown-item">
-                        <span>Semantic Similarity:</span>
-                        <strong>{{ match.semantic_score }}</strong>
+                        <!-- <span>Semantic Similarity:</span>
+                        <strong>{{ match.semantic_score }}</strong> -->
                     </div>
                     <div class="breakdown-item">
                         <span>Skill Match:</span>

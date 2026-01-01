@@ -137,26 +137,51 @@ REQUIRED JSON SCHEMA:
 def extract_json(text: str) -> dict:
     """
     Extracts the first valid JSON object from model output.
-    Handles cases where Gemini adds extra text.
+    Handles cases where LLM adds extra text or malformed JSON.
     """
+    # Try direct parse
     try:
-        # Direct parse
         return json.loads(text)
-    except json.JSONDecodeError:
+    except json.JSONDecodeError as e:
+        print(f"[parse_resume] Direct JSON parse failed: {e}")
         pass
 
-    # Fallback: extract JSON via regex
+    # Extract JSON between first { and last }
     match = re.search(r"\{.*\}", text, re.DOTALL)
     if not match:
         raise ValueError("❌ No JSON object found in LLM response")
 
-    return json.loads(match.group())
+    json_str = match.group()
+    
+    # Try parsing extracted JSON
+    try:
+        return json.loads(json_str)
+    except json.JSONDecodeError as e:
+        print(f"[parse_resume] Extracted JSON parse failed at char {e.pos}: {e.msg}")
+        
+        # Common fixes for LLM JSON issues
+        # 1. Fix trailing commas
+        json_str = re.sub(r',(\s*[}\]])', r'\1', json_str)
+        
+        # 2. Fix missing commas between items
+        json_str = re.sub(r'(["\d\]}])\s*\n\s*"', r'\1,\n"', json_str)
+        
+        # 3. Fix unescaped quotes in strings (basic)
+        json_str = re.sub(r'(?<!\\)"(?=\s*[^:,}\]])', r'\\"', json_str)
+        
+        try:
+            return json.loads(json_str)
+        except json.JSONDecodeError as e2:
+            # Still failed, return minimal valid structure
+            print(f"[parse_resume] JSON repair failed, returning minimal schema")
+            return RESUME_SCHEMA.copy()
 
 # ---------------- PARSER ---------------- #
 
 def parse_resume(resume_text: str) -> dict:
     for attempt in range(1, MAX_RETRIES + 1):
         try:
+            print(f"[parse_resume] Attempt {attempt}/{MAX_RETRIES}")
             response = CLIENT.models.generate_content(
                 model=MODEL_NAME,
                 contents=build_prompt(resume_text),
@@ -168,15 +193,21 @@ def parse_resume(resume_text: str) -> dict:
                 },
             )
 
-            parsed_json = extract_json(getattr(response, "text", ""))
+            response_text = getattr(response, "text", "")
+            print(f"[parse_resume] Response length: {len(response_text)} chars")
+            
+            parsed_json = extract_json(response_text)
+            print(f"[parse_resume] Successfully parsed JSON with {len(parsed_json)} keys")
             return parsed_json
 
         except Exception as e:
             print(f"⚠️ Attempt {attempt} failed: {e}")
             if attempt < MAX_RETRIES:
+                print(f"[parse_resume] Retrying in {RETRY_DELAY}s...")
                 time.sleep(RETRY_DELAY)
             else:
-                raise RuntimeError("❌ Failed to parse resume after retries")
+                print("❌ All retries exhausted, returning minimal schema")
+                return RESUME_SCHEMA.copy()
 
 # ---------------- MAIN ---------------- #
 

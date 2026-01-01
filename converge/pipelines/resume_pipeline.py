@@ -41,7 +41,7 @@ def process_resume_instance(resume) -> Optional[dict]:
         embedding = embed_semantic_text(semantic_text)
         print(f"[resume_pipeline] Embedding done (dim={len(embedding) if embedding else 0})")
 
-        # Persist
+        # Persist resume data
         resume.raw_text = raw_text
         resume.parsed_json = parsed_json
         resume.semantic_text = semantic_text
@@ -50,6 +50,49 @@ def process_resume_instance(resume) -> Optional[dict]:
             "raw_text", "parsed_json", "semantic_text", "embedding"
         ])
         print("[resume_pipeline] Persisted resume with embedding length:", len(resume.embedding or []))
+
+        # Consolidate profile_json with resume data
+        if resume.profile:
+            profile = resume.profile
+            print("[resume_pipeline] Consolidating profile_json...")
+            
+            # Merge form data with resume parsed data
+            profile_json = profile.profile_json or {}
+            profile_section = profile_json.get("profile", {})
+            
+            # Extract key info from parsed resume
+            resume_profile = parsed_json.get("profile", {})
+            skills = parsed_json.get("skills", {})
+            experience = parsed_json.get("experience_level", {})
+            projects = parsed_json.get("projects", [])
+            interests = parsed_json.get("interests", {})
+            
+            # Consolidate into complete profile_json
+            profile.profile_json = {
+                "profile": {
+                    "user_id": profile.registration_number,
+                    "name": profile.name or resume_profile.get("name", ""),
+                    "registration_number": profile.registration_number,
+                    "year": profile.year or resume_profile.get("year", ""),
+                    "department": profile.department or resume_profile.get("department", ""),
+                    "institution": resume_profile.get("institution", ""),
+                    "availability": resume_profile.get("availability", "medium")
+                },
+                "skills": skills,
+                "experience_level": experience,
+                "projects": projects,
+                "interests": interests,
+                "collaboration_preferences": {
+                    "roles_preferred": [r.strip() for r in (profile.preferred_roles or "").split(",") if r.strip()],
+                    "project_types": ["hackathon", "research", "startup", "open_source"],
+                    "team_size_preference": ""
+                },
+                "open_source": parsed_json.get("open_source", {}),
+                "achievements": parsed_json.get("achievements", {}),
+                "reputation_signals": parsed_json.get("reputation_signals", {})
+            }
+            profile.save(update_fields=["profile_json"])
+            print(f"[resume_pipeline] Profile {profile.registration_number} consolidated")
 
         return {
             "text_len": len(raw_text or ""),

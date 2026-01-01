@@ -8,6 +8,7 @@ router = DefaultRouter()
 router.register(r"", views.ProfileViewSet, basename="profile")
 
 urlpatterns = [
+    #This router will automatically generate URLs for all the actions in ProfileViewSet, like list, create, retrieve, update, and destroy.  
     path("", include(router.urls)),
     path("register/", views.register, name="register"),
 ]

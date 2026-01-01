@@ -4,16 +4,16 @@ from sklearn.metrics.pairwise import cosine_similarity
 from typing import List, Dict, Tuple
 
 # -------- CONFIG --------
-SEMANTIC_THRESHOLD = 0.1
+SEMANTIC_THRESHOLD = -0.5  # Very permissive for deterministic embeddings
 
-# Weights (must sum to 1.0)
+# Weights (must sum to 1.0) - reduced semantic weight, increased skill/experience
 WEIGHTS = {
-    "semantic": 0.50,
-    "skill": 0.18,
-    "experience": 0.12,
-    "year": 0.08,
-    "reputation": 0.07,
-    "availability": 0.05
+    "semantic": 0.20,
+    "skill": 0.30,
+    "experience": 0.20,
+    "year": 0.12,
+    "reputation": 0.10,
+    "availability": 0.08
 }
 
 # Experience level mapping
@@ -284,12 +284,12 @@ def compute_final_score(
     PHASE 2: Compute Final Composite Score
     
     FINAL_SCORE =
-        0.50 * semantic_similarity
-      + 0.18 * skill_match
-      + 0.12 * experience_alignment
-      + 0.08 * year_compatibility
-      + 0.07 * reputation
-      + 0.05 * availability
+        0.20 * semantic_similarity
+      + 0.30 * skill_match
+      + 0.20 * experience_alignment
+      + 0.12 * year_compatibility
+      + 0.10 * reputation
+      + 0.08 * availability
     
     Args:
         semantic_score: Semantic similarity (0-1)
@@ -478,12 +478,12 @@ def display_matches(matches: List[Dict], top_k: int = 5):
     for rank, match in enumerate(matches[:top_k], 1):
         print(f"RANK {rank}: {match['profile']['name']} ({match['user_id']})")
         print(f"  Final Score: {match['final_score']:.4f}")
-        print(f"  ├─ Semantic:     {match['semantic_score']:.4f} (×0.50 = {match['score_breakdown']['w_semantic']:.4f})")
-        print(f"  ├─ Skill Match:  {match['skill_score']:.4f} (×0.18 = {match['score_breakdown']['w_skill']:.4f})")
-        print(f"  ├─ Experience:   {match['experience_score']:.4f} (×0.12 = {match['score_breakdown']['w_experience']:.4f})")
-        print(f"  ├─ Year Compat:  {match['year_score']:.4f} (×0.08 = {match['score_breakdown']['w_year']:.4f})")
-        print(f"  ├─ Reputation:   {match['reputation_score']:.4f} (×0.07 = {match['score_breakdown']['w_reputation']:.4f})")
-        print(f"  └─ Availability: {match['availability_score']:.4f} (×0.05 = {match['score_breakdown']['w_availability']:.4f})")
+        print(f"  ├─ Semantic:     {match['semantic_score']:.4f} (×0.20 = {match['score_breakdown']['w_semantic']:.4f})")
+        print(f"  ├─ Skill Match:  {match['skill_score']:.4f} (×0.30 = {match['score_breakdown']['w_skill']:.4f})")
+        print(f"  ├─ Experience:   {match['experience_score']:.4f} (×0.20 = {match['score_breakdown']['w_experience']:.4f})")
+        print(f"  ├─ Year Compat:  {match['year_score']:.4f} (×0.12 = {match['score_breakdown']['w_year']:.4f})")
+        print(f"  ├─ Reputation:   {match['reputation_score']:.4f} (×0.10 = {match['score_breakdown']['w_reputation']:.4f})")
+        print(f"  └─ Availability: {match['availability_score']:.4f} (×0.08 = {match['score_breakdown']['w_availability']:.4f})")
         print(f"  Profile: {match['profile']['year']}, {match['profile']['availability']} availability")
         print()
 
