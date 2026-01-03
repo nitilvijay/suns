@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 from decouple import config
 
@@ -23,10 +24,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config('SECRET_KEY')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# Google Generative AI Configuration
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = False
+
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "    fundamentally-historiographic-leif.ngrok-free.dev"]
 
 
 # Application definition
