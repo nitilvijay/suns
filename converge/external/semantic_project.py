@@ -45,12 +45,6 @@ def build_semantic_text_project(project_json: dict) -> str:
             f"PROJECT TYPE:\n{project_json['project_type'].upper()}"
         )
     
-    # -------- TEAM SIZE --------
-    if project_json.get("team_size"):
-        sections.append(
-            f"TEAM SIZE:\n{project_json['team_size']} members"
-        )
-    
     # -------- FINAL SEMANTIC TEXT --------
     return "\n\n".join(sections)
 

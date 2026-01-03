@@ -301,15 +301,24 @@ def match_project(request, project_id):
 		print(f"  Total resumes: {total_resumes}")
 		print(f"  With embeddings: {resumes_with_embeddings}")
 		print(f"  Passed semantic gate: {passed_gate}")
-		print(f"  Final matches: {len(results[:top_n])}")
+		print(f"  Final matches: {len(results)}")
 		print(f"{'='*60}\n")
 		
 		return Response({
 			"project_id": project_id,
 			"project_type": project_type,
 			"alpha": PROJECT_TYPE_ALPHA.get(project_type, 0.65),
-			"matches": results[:top_n],
-			"count": len(results[:top_n]),
+			"matches": results,  # Return all matches, not limited to top_n
+			"count": len(results),
+			"top_n_requested": top_n,  # Include what was requested
+			"project_metadata": {
+				"title": proj_json.get("title"),
+				"description": proj_json.get("description"),
+				"required_skills": proj_json.get("required_skills", []),
+				"preferred_technologies": proj_json.get("preferred_technologies", []),
+				"domains": proj_json.get("domains", []),
+				"project_type": proj_json.get("project_type"),
+			},
 			"stats": {
 				"total_resumes": total_resumes,
 				"with_embeddings": resumes_with_embeddings,
