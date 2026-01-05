@@ -3,8 +3,8 @@ from django.db import models
 
 class Rating(models.Model):
 	"""Peer rating submitted after project completion."""
-	rater_id = models.CharField(max_length=64, db_index=True)
-	ratee_id = models.CharField(max_length=64, db_index=True)
+	rater_id = models.IntegerField(db_index=True)
+	ratee_id = models.IntegerField(db_index=True)
 	project_id = models.CharField(max_length=64, db_index=True)
 	category_scores = models.JSONField(default=dict)
 	raw_rating = models.FloatField()

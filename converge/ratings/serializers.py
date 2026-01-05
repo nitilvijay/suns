@@ -19,7 +19,16 @@ class RatingSerializer(serializers.ModelSerializer):
 
 
 class SubmitRatingSerializer(serializers.Serializer):
-	rater_id = serializers.CharField(max_length=64)
-	ratee_id = serializers.CharField(max_length=64)
+	rater_id = serializers.IntegerField()
+	ratee_id = serializers.IntegerField()
 	project_id = serializers.CharField(max_length=64)
 	category_scores = serializers.JSONField()
+	
+	def to_internal_value(self, data):
+		"""Convert string IDs to integers if needed."""
+		data = data.copy() if hasattr(data, 'copy') else dict(data)
+		if 'rater_id' in data and isinstance(data['rater_id'], str):
+			data['rater_id'] = int(data['rater_id'])
+		if 'ratee_id' in data and isinstance(data['ratee_id'], str):
+			data['ratee_id'] = int(data['ratee_id'])
+		return super().to_internal_value(data)

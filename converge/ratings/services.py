@@ -21,7 +21,7 @@ def calculate_raw_rating(category_scores: Dict[str, float]) -> float:
     return round(total, 3)
 
 
-def submit_rating_record(rater_id: str, ratee_id: str, project_id: str, category_scores: Dict[str, float]) -> Rating:
+def submit_rating_record(rater_id: int, ratee_id: int, project_id: str, category_scores: Dict[str, float]) -> Rating:
     raw = calculate_raw_rating(category_scores)
     adjusted = raw  # placeholder for rater reliability multiplier
     return Rating.objects.create(
@@ -34,7 +34,7 @@ def submit_rating_record(rater_id: str, ratee_id: str, project_id: str, category
     )
 
 
-def get_global_rating_data(ratee_id: str) -> Dict:
+def get_global_rating_data(ratee_id: int) -> Dict:
     qs = Rating.objects.filter(ratee_id=ratee_id)
     count = qs.count()
     if count == 0:

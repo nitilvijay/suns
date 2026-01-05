@@ -25,10 +25,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY')
 
 # Google Generative AI Configuration
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+GEMINI_API_KEY = config('GEMINI_API_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
+
+# Disable automatic trailing slash redirect (better for APIs)
+APPEND_SLASH = False
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", "fundamentally-historiographic-leif.ngrok-free.dev"]
 
@@ -168,4 +171,5 @@ CORS_ALLOW_HEADERS = [
     'user-agent',
     'x-csrftoken',
     'x-requested-with',
+    'ngrok-skip-browser-warning',
 ]

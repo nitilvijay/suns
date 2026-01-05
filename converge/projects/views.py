@@ -254,12 +254,17 @@ def match_project(request, project_id):
 			)
 			
 			# Layer 2: Trust and Execution
+			# Fetch ratings and fall back to neutral defaults if unavailable
+			global_rating_data = {
+				"global_rating": reputation.get("average_rating", 3.5),
+				"ratings_count": 0,
+			}
 			try:
-				global_rating_data = get_global_rating_data(resume_id)
-				global_rating = global_rating_data.get("global_rating", reputation.get("average_rating", 3.5))
+				global_rating_data = get_global_rating_data(int(resume_id))
 			except Exception:
-				# If ratings service unavailable, fall back to neutral or provided reputation
-				global_rating = reputation.get("average_rating", 3.5)
+				# If ratings service unavailable, use defaults above
+				pass
+			global_rating = global_rating_data.get("global_rating", reputation.get("average_rating", 3.5))
 			completed_projects = reputation.get("completed_projects", 0)
 			dropped_projects = 0  # TODO: from project history
 			availability = profile.get("availability", "medium")
@@ -286,6 +291,7 @@ def match_project(request, project_id):
 				"layer1_capability": capability_data,
 				"layer2_trust": trust_data,
 				"scoring_formula": final_score_data,
+				"ratings": global_rating_data,
 				"profile": {
 					"name": profile.get("name", "Unknown"),
 					"year": profile.get("year", "Unknown"),
