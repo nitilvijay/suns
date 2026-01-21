@@ -5,14 +5,14 @@
 **Converge** is a Django-based microservice that generates semantic embeddings for resumes and projects, then matches candidates to projects using a two-layer scoring algorithm combining semantic relevance and peer ratings.
 
 ### Key Features
-- 🔗 **Google GenAI Integration**: Uses `text-embedding-004` model for 768-dimensional semantic embeddings
-- 🎯 **Two-Layer Matching Algorithm**:
-  - **Layer 1 (Capability)**: Semantic similarity (45%) + skills match (35%) + experience alignment (20%)
-  - **Layer 2 (Trust)**: Peer ratings (55%) + reliability signals (45%)
-- ⭐ **Peer Rating System**: Community-driven trust scores with Bayesian smoothing
-- 💾 **Local Data Storage**: Stores canonical resume/project JSON locally—no shared database dependency
-- 🌐 **CORS Enabled**: Ready for cross-origin requests from Spring Boot or frontend
-- 🚀 **Production Ready**: Gunicorn + Nginx + PostgreSQL setup included
+-  **Google GenAI Integration**: Uses `text-embedding-004` model for 768-dimensional semantic embeddings
+-  **Two-Layer Matching Algorithm**:
+-  **Layer 1 (Capability)**: Semantic similarity (45%) + skills match (35%) + experience alignment (20%)
+-  **Layer 2 (Trust)**: Peer ratings (55%) + reliability signals (45%)
+-  **Peer Rating System**: Community-driven trust scores with Bayesian smoothing
+-  **Local Data Storage**: Stores canonical resume/project JSON locally—no shared database dependency
+-  **CORS Enabled**: Ready for cross-origin requests from Spring Boot or frontend
+-  **Production Ready**: Gunicorn + Nginx + PostgreSQL setup included
 
 ---
 
