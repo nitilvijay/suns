@@ -16,7 +16,35 @@
 
 ---
 
-## Problem It Solves (Pain Points)
+## Problem Brief & Solution
+
+### The Problem
+
+Many college project ideas fail not because they lack potential, but because students struggle to find like-minded collaborators beyond their immediate circles to bring their ideas to life. Additionally:
+
+1. **Theory-Heavy Learning**: Students are unable to practically apply learned concepts and have reduced exposure to implementation friction because of passive, theory-heavy learning environments.
+
+2. **Open-Source Barrier**: Beginners face a steep barrier when entering the open-source community, often discouraged by overwhelming codebases and the lack of small, beginner-friendly projects.
+
+3. **Research Gap**: Many students lack exposure to the research ecosystem and face difficulty finding opportunities, despite the presence of faculty willing to mentor and guide them.
+
+4. **Talent Invisibility**: No systematic way to discover and connect with complementary talent on campus.
+
+### The Solution: Converge
+
+Converge is a **campus-first collaboration platform** that enables students to discover, team up, and work on real-world projects and research, making them industry-ready professionals:
+
+#### Core Features
+- **Resume Intelligence**: Students upload their resumes/CVs and required data is extracted in a suitable format.
+- **AI-Powered Matching**: Professors/Students post project ideas, and an AI-powered peer recommender system gives the top-N most suitable students using semantic embeddings and a custom-built matching algorithm.
+- **Talent Visibility**: Improved talent visibility within the campus and a stronger peer-to-peer mentorship-cum-collaboration culture.
+- **Research Exposure**: Dedicated space where faculty publish active research areas, expanding student exposure and research participation.
+- **Project-Driven Learning**: Shift from passive theory to active, project-driven learning, emphasizing exposure to implementation friction.
+- **Open-Source Onboarding**: Dedicated open-source section to provide open-source newcomers a first-hand experience in contributing.
+
+---
+
+## Technical Problem It Solves (Architecture Level)
 
 1. **Cold Start Problem**: New candidates/projects have no historical data → Solved by semantic embeddings + default trust priors
 2. **Matching at Scale**: Manual matching is slow → Automated two-layer algorithm scores all candidates in seconds
