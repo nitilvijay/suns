@@ -1,0 +1,28 @@
+services:
+  backend:
+    build:
+      context: ./converge
+      dockerfile: Dockerfile
+    container_name: django_backend
+    ports:
+      - 8000:8000
+    volumes:
+      - ./converge:/backend
+    working_dir: /backend
+    env_file:
+      - ./converge/.env
+    depends_on:
+      - database
+    
+  database:
+    image: 'postgres:16'
+    container_name: postgres_db
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: converge_user
+      POSTGRES_PASSWORD: your_password
+      POSTGRES_DB: converge_dev
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+
